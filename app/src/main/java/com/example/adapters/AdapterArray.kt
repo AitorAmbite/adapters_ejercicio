@@ -10,14 +10,18 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import kotlin.random.Random
+import kotlin.reflect.typeOf
 
-class AdapterArray(var lista: MutableList<String>) : RecyclerView.Adapter<AdapterArray.StringViewHolder>() {
-
-    class StringViewHolder(var root: View, var textView: TextView,var checkBox: CheckBox) : RecyclerView.ViewHolder(root)
+class AdapterArray(var lista: MutableList<Int>) : RecyclerView.Adapter<AdapterArray.StringViewHolder>() {
+    // Variables
     var itemsChecked = 0
+    // Clases
+    class StringViewHolder(var root: View, var textView: TextView,var checkBox: CheckBox) : RecyclerView.ViewHolder(root)
+
+    //Metodos que hay que implementar porque vienen heradados del recyclerView
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): StringViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item,parent,false)
-
+        //cambiarlo a view binding carajo como se haceeee
         val twTextView = view.findViewById<TextView>(R.id.tw_item)
         val checkBoxView = view.findViewById<CheckBox>(R.id.cb_item)
 
@@ -35,28 +39,29 @@ class AdapterArray(var lista: MutableList<String>) : RecyclerView.Adapter<Adapte
 
                 holder.textView.setOnClickListener{
                     lista.removeAt(Random.nextInt(lista.size))
-                    Log.d("prueba","prueba ${Random.nextInt(lista.size)}   - - - ${lista.size}")
-                    this.notifyDataSetChanged()
                 }
             }
-            lista.size-1 ->{
+            itemCount - 1 -> {
                 holder.textView.text = "Insertar"
-//                Log.d("prueba","prueba ${Random.nextInt(lista.size)}   - - - ${lista.size}")
                 holder.textView.setOnClickListener {
-                    Log.d("prueba","prueba ${lista.size} - - - ${position+1}")
-                    lista.add("PC-$position")
+                    lista.add(lista.last()+1)
                     it.setOnClickListener(null)
                     this.notifyDataSetChanged()
                 }
             }
-            lista.size-2 ->{
+            itemCount-2 ->{
                 holder.textView.text = "Contar encendidos"
+                holder.textView.setOnClickListener {
+                    Toast.makeText(holder.root.context,"Hay ${itemsChecked} encendidos",Toast.LENGTH_LONG).show()
+                }
             }
             else->{
-                holder.textView.text = lista[position]
+                holder.textView.setOnClickListener(null) // esto esta asi porque cuando añadia se me quedaba el listener en el nuevo
+                // es la unica manera que he encontrado de solucionarlo :(
+                holder.textView.text = "pc-${lista[position]}"
             }
         }
-
+        //aqui le aplico un listener a los checkbox para cambiar el background y sumar o restar cuantos hay on/off
         holder.checkBox.setOnCheckedChangeListener { button, checked ->
             if(checked) {
                 holder.root.setBackgroundColor(holder.root.context.getColor(R.color.green))
@@ -65,8 +70,10 @@ class AdapterArray(var lista: MutableList<String>) : RecyclerView.Adapter<Adapte
                 holder.root.setBackgroundColor(holder.root.context.getColor(R.color.red))
                 itemsChecked--
             }
-            Log.d("num","$itemsChecked")
         }
+
+
+
     }
 
 }

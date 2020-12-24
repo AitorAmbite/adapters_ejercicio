@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.adapters.databinding.ActivityMainBinding
+import kotlin.random.Random
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -18,8 +19,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun createRecyclerView(){
-        val listaString = listOf("PC-1","PC-2","PC-3","PC-4","PC-5")
-        adapter = AdapterArray(listaString.toMutableList())
+        val listaNumsPcs = mutableListOf<Int>()
+        for(i in 1..Random.nextInt(6,10)){
+            listaNumsPcs.add(i)
+        }
+        adapter = AdapterArray(listaNumsPcs.toMutableList())
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
     }
